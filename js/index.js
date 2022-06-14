@@ -17,11 +17,11 @@ var moveTile = function (e) {
     if (posRow + 1 == emptytilePosRow && posCol == emptytilePosCol) {
         $(this).animate({
             'top': "+=" + cellDisplacement //moves up
-        });
+        }, "fast");
 
         $('#empty').animate({
             'top': "-=" + cellDisplacement //moves down
-        });
+        }, "fast");
 
         emptytilePosRow -= 1;
         $(this).attr('data-pos', (posRow + 1) + "," + posCol);
@@ -31,11 +31,11 @@ var moveTile = function (e) {
     if (posRow - 1 == emptytilePosRow && posCol == emptytilePosCol) {
         $(this).animate({
             'top': "-=" + cellDisplacement //moves down
-        });
+        }, "fast");
 
         $('#empty').animate({
             'top': "+=" + cellDisplacement //moves up
-        });
+        }, "fast");
 
         emptytilePosRow += 1;
         $(this).attr('data-pos', (posRow - 1) + "," + posCol);
@@ -45,11 +45,11 @@ var moveTile = function (e) {
     if (posRow == emptytilePosRow && posCol + 1 == emptytilePosCol) {
         $(this).animate({
             'right': "-=" + cellDisplacement //moves right
-        });
+        }, "fast");
 
         $('#empty').animate({
             'right': "+=" + cellDisplacement //moves left
-        });
+        }, "fast");
 
         emptytilePosCol -= 1;
         $(this).attr('data-pos', posRow + "," + (posCol + 1));
@@ -59,11 +59,11 @@ var moveTile = function (e) {
     if (posRow == emptytilePosRow && posCol - 1 == emptytilePosCol) {
         $(this).animate({
             'right': "+=" + cellDisplacement //moves left
-        });
+        }, "fast");
 
         $('#empty').animate({
             'right': "-=" + cellDisplacement //moves right
-        });
+        }, "fast");
 
         emptytilePosCol += 1;
         $(this).attr('data-pos', posRow + "," + (posCol - 1));
