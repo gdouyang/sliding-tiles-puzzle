@@ -73,17 +73,11 @@ var moveTile = function (e) {
     $('#empty').attr('data-pos', emptytilePosRow + "," + emptytilePosCol);
 };
 
-$(document).ready(function() {
-    $('div[data-pos]').click(function(e) {
-        moveTile.call(this, e)
-    })
-})
-
-var Node = function (value, state, emptyRow, emptyCol, depth) {
+function MyNode(value, state, emptyRow, emptyCol, depth) {
     this.value = value;
     this.state = state;
-    this.emptyCol = emptyCol;
     this.emptyRow = emptyRow;
+    this.emptyCol = emptyCol;
     this.depth = depth;
     this.strRepresentation = '';
     this.path = '';
@@ -150,7 +144,7 @@ AStar.prototype.expandNode = function (node) {
         temp = newState[row - 1][col];
         newState[row - 1][col] = this.empty;
         newState[row][col] = temp;
-        newNode = new Node(0, newState, row - 1, col, node.depth + 1);
+        newNode = new MyNode(0, newState, row - 1, col, node.depth + 1);
 
         if (!this.visited.contains(newNode.strRepresentation)) {
             newNode.value = newNode.depth + this.heuristic(newNode);
@@ -166,7 +160,7 @@ AStar.prototype.expandNode = function (node) {
         temp = newState[row + 1][col];
         newState[row + 1][col] = this.empty;
         newState[row][col] = temp;
-        newNode = new Node(0, newState, row + 1, col, node.depth + 1);
+        newNode = new MyNode(0, newState, row + 1, col, node.depth + 1);
 
         if (!this.visited.contains(newNode.strRepresentation)) {
             newNode.value = newNode.depth + this.heuristic(newNode);
@@ -182,7 +176,7 @@ AStar.prototype.expandNode = function (node) {
         temp = newState[row][col - 1];
         newState[row][col - 1] = this.empty;
         newState[row][col] = temp;
-        newNode = new Node(0, newState, row, col - 1, node.depth + 1);
+        newNode = new MyNode(0, newState, row, col - 1, node.depth + 1);
 
         if (!this.visited.contains(newNode.strRepresentation)) {
             newNode.value = newNode.depth + this.heuristic(newNode);
@@ -198,7 +192,7 @@ AStar.prototype.expandNode = function (node) {
         temp = newState[row][col + 1];
         newState[row][col + 1] = this.empty;
         newState[row][col] = temp;
-        newNode = new Node(0, newState, row, col + 1, node.depth + 1);
+        newNode = new MyNode(0, newState, row, col + 1, node.depth + 1);
 
         if (!this.visited.contains(newNode.strRepresentation)) {
             newNode.value = newNode.depth + this.heuristic(newNode);
@@ -326,8 +320,8 @@ AStar.prototype.misplacedTiles = function (node) {
 
 
 var start = function () {
-    var init = new Node(0, [[6, 4, 7], [8, 5, 0], [3, 2, 1]], 1, 2, 0);
-    var goal = new Node(0, [[1, 2, 3], [4, 5, 6], [7, 8, 0]], 2, 2, 0);
+    var init = window.initNode; // new MyNode(0, [[6, 4, 7], [8, 5, 0], [3, 2, 1]], 1, 2, 0);
+    var goal = window.goalNode; //new MyNode(0, [[1, 2, 3], [4, 5, 6], [7, 8, 0]], 2, 2, 0);
 
     var aStar = new AStar(init, goal, 0);
     // To measure time taken by the algorithm
@@ -337,11 +331,11 @@ var start = function () {
     // To measure time taken by the algorithm
     var endTime = new Date();
     alert('Completed in: ' + (endTime - startTime) + ' milliseconds');
+    console.log(aStar.visited)
 
     var panel = document.getElementById('panel');
     panel.innerHTML = 'Solution: ' + result.path + ' Total steps: ' + result.path.length + '';
     window.solution = result.path;
-    console.log(aStar.queue)
 };
 
 var showSolution = function() {
@@ -372,3 +366,78 @@ var showSolution = function() {
         panel.innerHTML = innerHTML + '<br>' + list.join(', ');
     }
 }
+
+function init () {
+    var initRows = []
+    var goalRows = []
+    
+    var row = 3
+    var col = 3
+
+    var total = row * col
+    var list = []
+    var subList = []
+    for (let index = 0; index < total; index++) {
+        list.push(index);
+        if (index != 0) {
+            subList.push(index)
+        }
+        if (index == total -1) {
+            subList.push(0)
+        }
+        if (subList.length == 3) {
+            goalRows.push(subList)
+            subList = []
+        }
+    }
+    subList = []
+    while(list.length > 0) {
+        let index = Math.floor((Math.random() * list.length) + 1) - 1;
+        const element = list[index];
+        list.splice(index, 1)
+        subList.push(element)
+        if (element == 0) {
+            emptytilePosRow = initRows.length
+            emptytilePosCol = subList.length - 1
+        }
+        if (subList.length == 3) {
+            initRows.push(subList)
+            subList = []
+        }
+    }
+    var html = []
+    initRows.forEach((sub, row) => {
+        html.push('<div class="row">')
+        sub.forEach((s, col) => {
+            if (s == 0) {
+                html.push('<div class="cell" id="empty" data-pos="'+ row +',' + col +'"></div>')
+            } else {
+                html.push('<div class="cell" data-pos="'+ row +',' + col +'"><span>'+ s +'</span></div>')
+            }
+        })
+        html.push('</div>')
+    })
+    $('#initConfig').html(html.join(''))
+    var html = []
+    goalRows.forEach((sub, row) => {
+        html.push('<div class="row">')
+        sub.forEach((s, col) => {
+            if (s == 0) {
+                html.push('<div class="cell"></div>')
+            } else {
+                html.push('<div class="cell"><span>'+ s +'</span></div>')
+            }
+        })
+        html.push('</div>')
+    })
+    $('#goalConfig').html(html.join(''))
+    window.initNode =  new MyNode(0, initRows, emptytilePosRow, emptytilePosCol, 0);
+    window.goalNode = new MyNode(0, goalRows, row - 1, col - 1, 0);
+}
+
+$(document).ready(function() {
+    init()
+    $('div[data-pos]').click(function(e) {
+        moveTile.call(this, e)
+    })
+})
