@@ -331,6 +331,11 @@ var start = function () {
     // To measure time taken by the algorithm
     var endTime = new Date();
     alert('Completed in: ' + (endTime - startTime) + ' milliseconds');
+    aStar.visited.forEach((v, k) => {
+        if (v == goal.strRepresentation) {
+            console.log(v)
+        }
+    })
     console.log(aStar.visited)
 
     var panel = document.getElementById('panel');
